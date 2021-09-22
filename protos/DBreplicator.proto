@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+// Service Definition
+service ReplicatorService {
+  rpc Replicate (ReplicateRequest) returns (ReplicateReply) {}
+}
+
+// Message Definition
+message ReplicateRequest {
+  string json_string = 1;
+}
+
+message ReplicateReply {
+  string message = 1;
+}
