@@ -9,10 +9,10 @@ cur = conn.cursor()
 
 try:
     # test_decoding produces textual output
-    cur.start_replication(slot_name='pytest4', decode=True)
+    cur.start_replication(slot_name='pytest7',decode=True)
 except psycopg2.ProgrammingError:
-    cur.create_replication_slot('pytest4', output_plugin='wal2json')
-    cur.start_replication(slot_name='pytest4', decode=True)
+    cur.create_replication_slot('pytest7', output_plugin='wal2json')
+    cur.start_replication(slot_name='pytest7', decode=True)
 
 class DemoConsumer(object):
     def __call__(self, msg):
