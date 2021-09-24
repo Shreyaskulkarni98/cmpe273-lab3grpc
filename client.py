@@ -1,12 +1,21 @@
-import logging
+import sys
+import psycopg2
+import psycopg2.extras
+import json
 from grpc_requests import StubClient
 import psycopg2
-
 import DBreplicator_pb2
 from DBreplicator_pb2 import DESCRIPTOR
-import json
-import DBreplicator_pb2_grpc
 
+conn = psycopg2.connect('dbname=postgres user=postgres password=Kulkarni@10', connection_factory=psycopg2.extras.LogicalReplicationConnection)
+cur = conn.cursor()
+
+try:
+    # test_decoding produces textual output
+    cur.start_replication(slot_name='pytest8',decode=True)
+except psycopg2.ProgrammingError:
+    cur.create_replication_slot('pytest8', output_plugin='wal2json')
+    cur.start_replication(slot_name='pytest8', decode=True)
 
 def run(json_string):
     service_descriptor = DESCRIPTOR.services_by_name['ReplicatorService']
@@ -19,10 +28,22 @@ def run(json_string):
     print(result)
 
 
-if __name__ == '__main__':
-    logging.basicConfig()
+class DemoConsumer(object):
+    def __call__(self, msg):
+        # msg.payload is a string
+        run(msg.payload)
+        msg.cursor.send_feedback(flush_lsn=msg.data_start)
 
-    # dbconn = PostgresWrapper()
-    # dbconn.connect()
-    # json_obj = dbconn.get_json()
+democonsumer = DemoConsumer()
 
+print("Starting streaming, press Control-C to end...", file=sys.stderr)
+try:
+   cur.consume_stream(democonsumer)
+except KeyboardInterrupt:
+   cur.close()
+   conn.close()
+   print("The slot 'pytest' still exists. Drop it with "
+      "SELECT pg_drop_replication_slot('pytest'); if no longer needed.",
+      file=sys.stderr)
+   print("WARNING: Transaction logs will accumulate in pg_xlog "
+      "until the slot is dropped.", file=sys.stderr)
