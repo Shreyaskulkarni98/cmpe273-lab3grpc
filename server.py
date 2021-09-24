@@ -15,23 +15,23 @@ class ReplicatorService(DBreplicator_pb2_grpc.ReplicatorServiceServicer):
         client = pymongo.MongoClient("mongodb+srv://" + username + ":" + password + "@cluster0.lgfur.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
         json_obj = json.loads(request.json_string)
         print(json_obj)
-        # if(json_obj['change'][0]['kind'] == 'insert'):
-        #     print("schema :" + json_obj['change'][0]['schema'])
-        #     print("table :" + json_obj['change'][0]['table'])
-        #     db = client[json_obj['change'][0]['schema']]
-        #     coll = db[json_obj['change'][0]['table']]
-        #     print("connected: " + str(coll))
-        #
-        #     doc = {}
-        #     for i in range(0, len(json_obj['change'][0]['columnnames'])):
-        #         doc[json_obj['change'][0]['columnnames'][i]] = json_obj['change'][0]['columnvalues'][i]
-        #
-        #     coll.insert_one(doc)
-        #
-        # elif(json_obj['change'][0]['kind'] == 'delete'):
-        #     print("dssoncuedno")
-        # else:
-        #     print("I can replicate only insert and delete operations")
+        if(json_obj['change'][0]['kind'] == 'insert'):
+            print("schema :" + json_obj['change'][0]['schema'])
+            print("table :" + json_obj['change'][0]['table'])
+            db = client[json_obj['change'][0]['schema']]
+            coll = db[json_obj['change'][0]['table']]
+            print("connected: " + str(coll))
+
+            doc = {}
+            for i in range(0, len(json_obj['change'][0]['columnnames'])):
+                doc[json_obj['change'][0]['columnnames'][i]] = json_obj['change'][0]['columnvalues'][i]
+
+            coll.insert_one(doc)
+
+        elif(json_obj['change'][0]['kind'] == 'delete'):
+            print("dssoncuedno")
+        else:
+            print("I can replicate only insert and delete operations")
 
         return DBreplicator_pb2.ReplicateReply(message='Duplicated in mogngoDB Atlas: ')
 
