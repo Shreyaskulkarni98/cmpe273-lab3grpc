@@ -3,7 +3,6 @@ from grpc_requests import StubClient
 import psycopg2
 
 import DBreplicator_pb2
-from wrapper import PostgresWrapper
 from DBreplicator_pb2 import DESCRIPTOR
 import json
 import DBreplicator_pb2_grpc
