@@ -16,10 +16,8 @@ def run(json_string):
     assert client.service_names == ["ReplicatorService"]
     replicator = client.service("ReplicatorService")
 
-    # json_obj = json.loads(json_string)
-    # print(json_obj)
     result = replicator.Replicate(DBreplicator_pb2.ReplicateRequest(json_string=json_string))
-    # print(result)
+    print(result)
 
 
 if __name__ == '__main__':
