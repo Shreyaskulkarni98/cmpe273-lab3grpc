@@ -11,7 +11,6 @@ dbname = 'postgres'
 user = 'postgres'
 password = 'kulkarni@10'
 
-
 conn = psycopg2.connect('dbname=postgres user=postgres password=Kulkarni@10', connection_factory=psycopg2.extras.LogicalReplicationConnection)
 cur = conn.cursor()
 
