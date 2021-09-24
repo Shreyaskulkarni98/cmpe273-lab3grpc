@@ -7,15 +7,20 @@ import psycopg2
 import DBreplicator_pb2
 from DBreplicator_pb2 import DESCRIPTOR
 
+dbname = 'postgres'
+user = 'postgres'
+password = 'kulkarni@10'
+
+
 conn = psycopg2.connect('dbname=postgres user=postgres password=Kulkarni@10', connection_factory=psycopg2.extras.LogicalReplicationConnection)
 cur = conn.cursor()
 
 try:
     # test_decoding produces textual output
-    cur.start_replication(slot_name='pytest8',decode=True)
+    cur.start_replication(slot_name='pytest6',decode=True)
 except psycopg2.ProgrammingError:
-    cur.create_replication_slot('pytest8', output_plugin='wal2json')
-    cur.start_replication(slot_name='pytest8', decode=True)
+    cur.create_replication_slot('pytest6', output_plugin='wal2json')
+    cur.start_replication(slot_name='pytest6', decode=True)
 
 def run(json_string):
     service_descriptor = DESCRIPTOR.services_by_name['ReplicatorService']
